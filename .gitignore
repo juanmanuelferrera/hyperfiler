@@ -50,3 +50,12 @@ auto-backup*.json
 gtd-tasks-backup*.json
 /jsons
 mcp-server/__pycache__/
+
+# --- añadido por limpiar-basura.sh ---
+.DS_Store
+__pycache__/
+*.pyc
+*~
+\#*\#
+.\#*
+*.log
