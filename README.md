@@ -1,89 +1,34 @@
-# HyperFiler Pro - Modular Architecture
+# HyperFiler Pro (gtd-claude)
 
-A comprehensive task management application built with clean ES6 modular architecture.
+HyperFiler Pro is a GTD-style task manager built as a PWA: a static front end (`hyperfiler-pro.html` is the app, `index.html` is the website) backed by Cloudflare Workers (Hono, D1, Stripe) with offline support through a service worker.
 
-## 🎉 Milestone Achieved
+## Structure
 
-**v4.5.22** - Complete modular refactoring:
-- **23 ES6 modules** (17 features, 3 core, 3 UI)
-- **530 functions** extracted and organized
-- **627+ automated tests** with zero breaking changes
-- **Complete backward compatibility** maintained
+- `hyperfiler-pro.html`, `index.html`, `login.html`, `register.html`, `success.html`, `cancel.html` (plus `-es` variants for some) — app and site pages.
+- `js/` — front-end scripts (auth, backup/import, dark mode, keyboard shortcuts, globals, list operations, etc.) and `js/core/`.
+- `sw.js`, `manifest.json` — service worker and PWA manifest.
+- `hyperfiler-backend/` — backend Worker (`worker.js`, `lists-sync.js`, `migrations/`, `wrangler.toml`).
+- `sync-worker.mjs`, `user-sync-do.js`, `wrangler.sync-worker.toml` — sync Worker with a Durable Object.
+- `mcp-server/` — MCP server.
+- `hyperfiler_elisp/` — Emacs Lisp client (`hyperfiler.el`).
+- `email-templates/` — welcome and promo emails.
+- `deploy*.sh`, `rollback-to-happy1.sh`, `verify_v2.0.7_deployment.sh` — deployment and rollback scripts.
+- Many `*.md` notes: `CHANGELOG.md`, `DEPLOYMENT.md`, `STRIPE_SETUP.md`, `EMAIL_SETUP.md`, `SECURITY_FIXES.md`, restore and backup guides, and `CLAUDE.md` with the deployment rules.
 
-## Quick Start
+## Usage
 
-```bash
-# Clone repository
-git clone <repository-url>
-cd gtd-claude
-
-# Start development server
-python3 -m http.server 8000
-
-# Open in browser
-open http://localhost:8000/hyperfiler-pro-modular.html
+```sh
+python3 -m http.server 8000     # serve the static front end locally
+npm run dev                     # wrangler dev (Worker)
+npm run deploy                  # wrangler deploy
+npm run db:migrate              # apply D1 migrations (db:migrate:local for local)
+npx wrangler pages deploy . --project-name=hyperfiler   # publish the front end
 ```
 
-## Architecture Overview
+Per `CLAUDE.md`, the Pages project is `hyperfiler` (never `hyperfiler-fresh`), and cache-busting version strings in `hyperfiler-pro.html` must be updated when JS files change.
 
-See **[ARCHITECTURE.md](ARCHITECTURE.md)** for complete system documentation.
+## Status
 
-### Module Structure (23 modules)
-
-**Core (4):** globals, sanitization, storage, utils  
-**Features (17):** auth, data-operations, export-import, i18n, missing-functions, natural-language, network-status, offline-sync, sync, task-actions, task-management, tasks, templates, undo  
-**UI (3):** dark-mode, keyboard-shortcuts, notifications, offline-ui, ui-components
-
-## Key Features
-
-- ✅ Complete task management (CRUD, templates, repeat tasks)
-- ✅ Multiple views (Today, Week, Month, All Tasks, Lists)
-- ✅ Cloud sync with offline support
-- ✅ Import/export (JSON, text, HTML, Org-mode)
-- ✅ Dark mode & keyboard shortcuts
-- ✅ Natural language input
-- ✅ Search across all views
-- ✅ Mobile responsive
-
-## Testing
-
-```bash
-open http://localhost:8000/hyperfiler-pro-modular.html
-```
-
-**627+ automated tests** covering all 23 modules with zero failures.
-
-## Documentation
-
-- **[ARCHITECTURE.md](ARCHITECTURE.md)** - Complete system architecture
-- **[MIGRATION-GUIDE.md](MIGRATION-GUIDE.md)** - Developer migration guide  
-- **[MODULAR-CHANGELOG.md](MODULAR-CHANGELOG.md)** - Phase-by-phase history
-
-## Development
-
-```javascript
-// Import from modules
-import { formatDate } from './src/modules/core/utils.js';
-import { createTaskObject } from './src/modules/features/tasks.js';
-import { renderTodayView } from './src/modules/ui/ui-components.js';
-```
-
-See **[MIGRATION-GUIDE.md](MIGRATION-GUIDE.md)** for complete examples.
-
-## Deployment
-
-```bash
-npx wrangler pages deploy . --project-name=hyperfiler
-```
-
-Live: https://hyperfiler.pages.dev/hyperfiler-pro-modular.html
-
-## Stats
-
-```
-23 modules | 530 functions | 627+ tests | 0 breaking changes
-```
-
----
-
-**Status:** ✅ Production Ready | **Architecture:** ES6 Modules | **Test Coverage:** Complete
+- Latest commits remove machine-generated output from version control and move the pending ideas from the retired `tasks.org` into `PROGRESS.md` (18-Oct-2026).
+- `PROGRESS.md`: no open work; the ideas listed there are not committed tasks.
+- An earlier version of this README described a 23-module ES6 refactor under `src/modules/` with 627+ tests; that tree is not present in the repo.
